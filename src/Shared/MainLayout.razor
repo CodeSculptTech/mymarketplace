@@ -4,12 +4,11 @@
     <nav class="navbar navbar-expand-sm box-shadow">
         <div class="container">
             <a class="navbar-brand" href="/">My Marketplace</a>
-            @if (Convert.ToBoolean(Environment.GetEnvironmentVariable("AuthEnabled")))
-            {
+ 
                 <div class="d-flex">
                     <LoginDisplay />
                 </div>
-            }
+            
         </div>
     </nav>
 </header>

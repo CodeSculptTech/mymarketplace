@@ -2,8 +2,11 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
+using Microsoft.IdentityModel.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
+
+IdentityModelEventSource.ShowPII = true;
 
 builder.Services.Configure<LiteDbOptions>(builder.Configuration.GetSection("LiteDbOptions"));
 builder.Services.Configure<FormOptions>(p =>
@@ -25,10 +28,14 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddCors();
 
-// Add services to the container.
+builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
+    .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"));
+builder.Services.AddControllersWithViews().AddMicrosoftIdentityUI();
 
+// Add services to the container.
 builder.Services.AddRazorPages();
-builder.Services.AddServerSideBlazor();
+builder.Services.AddServerSideBlazor()
+.AddMicrosoftIdentityConsentHandler();
 
 var app = builder.Build();
 
@@ -64,6 +71,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.MapBlazorHub();
-app.MapFallbackToPage("{*path}","/_Host");
+app.MapFallbackToPage("{*path}", "/_Host");
 
 app.Run();
